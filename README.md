@@ -4,6 +4,7 @@ Product Owner (PO): Andrea Nicole Arellano M´arquez
 Scrum Master (SM): Angel Benjam´ın Barrientos Carrasco 
 
 Visi´on del Sprint
+
 Visi´on del Sprint 1
 El objetivo principal del Sprint 1 es implementar el flujo completo para el registro de
 objetos encontrados dentro del sistema. Este sprint busca desarrollar la funcionalidad que
