@@ -1,7 +1,8 @@
 # Ingenieria-de-Software-Objetos-Perdidos.
  Equipo y Roles
 Product Owner (PO): Andrea Nicole Arellano M´arquez
-Scrum Master (SM): Angel Benjam´ın Barrientos Carrasco ´
+Scrum Master (SM): Angel Benjam´ın Barrientos Carrasco 
+
 Visi´on del Sprint
 Visi´on del Sprint 1
 El objetivo principal del Sprint 1 es implementar el flujo completo para el registro de
@@ -13,6 +14,7 @@ Durante este sprint se abordar´an todas las etapas esenciales del proceso, desd
 de la interfaz de registro hasta la persistencia de los datos en la base de datos. Se busca
 garantizar que cada elemento del flujo sea funcional, seguro y coherente con la arquitectura
 general del sistema.
+
 Tareas principales
 1. Dise˜no y desarrollo del formulario de registro: Crear una interfaz gr´afica que
 permita ingresar los datos relevantes del objeto (nombre, descripci´on, lugar y fecha en
@@ -34,8 +36,9 @@ validaci´on.
 5. Documentaci´on t´ecnica y manual preliminar de usuario: Elaborar la documentaci´on que describa el proceso de desarrollo, los requerimientos t´ecnicos y la estructura
 de datos implementada. Adem´as, generar una gu´ıa b´asica para el uso del m´odulo de
 registro de objetos encontrados.
+
 Resultado esperado
-Al concluir el Sprint 1, el sistema deber´a contar con un m´odulo completamente funcional
+Al concluir el Sprint 1, el sistema deberá contar con un m´odulo completamente funcional
 para el registro de objetos encontrados. Este m´odulo deber´a incluir validaciones adecuadas,
 mensajes informativos al usuario y almacenamiento seguro de los datos. El resultado servir´a
 como base para los pr´oximos sprints, en los cuales se a˜nadir´an funcionalidades complementarias como la b´usqueda, categorizaci´on y notificaci´on de coincidencias con objetos perdidos.
