@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Página del Encargado - Objetos Perdidos</title>
+<style>
+    body{margin:0;font-family:Arial;background:#eef2ff}
+    header{background:#001E62;color:#fff;text-align:center;padding:16px;font-weight:bold}
+    nav{background:#FFCE00;padding:12px;display:flex;justify-content:center;gap:20px;font-weight:bold}
+    nav div{cursor:pointer;padding:6px 14px;border-radius:8px;border:2px solid transparent}
+    nav div.active{border:2px solid #001E62}
+    .section{width:90%;max-width:980px;background:#fff;margin:20px auto;padding:16px;border-radius:12px;border:2px solid #001E62;display:none}
+    h2{color:#001E62;margin-top:0}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .toolbar input,.toolbar select{padding:10px;border-radius:8px;border:1.5px solid #001E62}
+    .btn{background:#FFCE00;border:none;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
+    .item{background:#f2f5ff;border:1px solid #001E62;border-radius:10px;padding:12px;margin-bottom:10px}
+    .msg{font-style:italic;color:#333}
+    .pair{border:1px dashed #001E62;background:#fff;border-radius:8px;padding:10px;margin-top:8px}
+    .score{font-weight:bold;color:#0a7}
+</style>
+</head>
+<body>
+<header>Página del Encargado - UDEC</header>
+
+<nav>
+    <div id="navEncontrados" class="active" onclick="mostrar('encontrados')">Encontrados</div>
+    <div id="navPerdidos" onclick="mostrar('perdidos')">Perdidos</div>
+    <div id="navComparador" onclick="mostrar('comparador')">Comparador</div>
+</nav>
+
+<!-- Sección Encontrados -->
+<div id="encontrados" class="section" style="display:block;">
+    <h2>Objetos Encontrados</h2>
+    <div class="toolbar">
+        <input type="text" id="qEncontrados" placeholder="Buscar..." />
+        <select id="catEncontrados">
+            <option value="">Todas</option>
+            <option value="Electronica">Electrónica</option>
+            <option value="Accesorios">Accesorios</option>
+            <option value="Ropa">Ropa</option>
+            <option value="Otros">Otros</option>
+        </select>
+        <button class="btn" onclick="cargarEncontrados()">Actualizar</button>
+    </div>
+    <div id="estadoEncontrados" class="msg">Cargando...</div>
+    <div id="listaEncontrados"></div>
+</div>
+
+<!-- Sección Perdidos -->
+<div id="perdidos" class="section">
+    <h2>Reportes Perdidos</h2>
+    <div class="toolbar">
+        <input type="text" id="qPerdidos" placeholder="Buscar..." />
+        <select id="catPerdidos">
+            <option value="">Todas</option>
+            <option value="Electronica">Electrónica</option>
+            <option value="Accesorios">Accesorios</option>
+            <option value="Ropa">Ropa</option>
+            <option value="Otros">Otros</option>
+        </select>
+        <button class="btn" onclick="cargarPerdidos()">Actualizar</button>
+    </div>
+    <div id="estadoPerdidos" class="msg">Cargando...</div>
+    <div id="listaPerdidos"></div>
+</div>
+
+<!-- Sección Comparador -->
+<div id="comparador" class="section">
+    <h2>Comparador Sencillo</h2>
+    <div class="toolbar">
+        <select id="catComparador">
+            <option value="">Todas las categorías</option>
+            <option value="Electronica">Electrónica</option>
+            <option value="Accesorios">Accesorios</option>
+            <option value="Ropa">Ropa</option>
+            <option value="Otros">Otros</option>
+        </select>
+        <input type="number" id="umbral" min="0" max="100" value="50" style="width:100px" />
+        <label>Umbral (%)</label>
+        <button class="btn" onclick="comparar()">Buscar Coincidencias</button>
+    </div>
+    <div id="estadoComparador" class="msg">Cargando datos...</div>
+    <div id="resultadoComparador"></div>
+</div>
+
+
+<script>
+/* ========= Config ========= */
+const API_TODOS = "http://localhost:3000/api/solicitudes"; // Lee BaseDATOS.json
+
+/* ========= Estado ========= */
+let todos = [];          // Todo lo que viene del JSON
+let encontrados = [];    // tipo === "encontrado"
+let perdidos = [];       // tipo === "perdido"
+
+/* ========= Utilidades ========= */
+function normalizeText(t = "") {
+  return t
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")      // quita acentos
+    .replace(/[^a-z0-9\s]/g, " ")         // solo letras/números/espacios
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function jaccard(a, b) {
+  const A = new Set(normalizeText(a).split(" ").filter(w => w.length > 2));
+  const B = new Set(normalizeText(b).split(" ").filter(w => w.length > 2));
+  if (A.size === 0 && B.size === 0) return 0;
+  let inter = 0;
+  for (const w of A) if (B.has(w)) inter++;
+  const union = A.size + B.size - inter;
+  return union === 0 ? 0 : (inter / union) * 100;
+}
+function similarityScore(per, enc) {
+  const txtPer = `${per?.nombre || ""} ${per?.descripcion || ""}`;
+  const txtEnc = `${enc?.nombre || ""} ${enc?.descripcion || ""}`;
+  const j = jaccard(txtPer, txtEnc);               // peso 70%
+  const catMatch = (per?.categoria || "") === (enc?.categoria || "");
+  const c = catMatch ? 100 : 0;                    // peso 30%
+  return Math.round(0.7 * j + 0.3 * c);
+}
+function formatDate(isoOrDate) {
+  const v = isoOrDate || "";
+  if (!v) return "-";
+  try {
+    const d = new Date(v);
+    if (isNaN(d)) return v; // si no es ISO, mostrar tal cual
+    return d.toLocaleDateString("es-CL");
+  } catch { return v; }
+}
+
+/* ========= Render ========= */
+function renderItemCard(item) {
+  return `
+    <div class="item">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong>${item.nombre || "(sin nombre)"}</strong>
+        <span style="background:#001E62;color:#fff;padding:2px 8px;border-radius:8px;font-size:12px">
+          ${item.categoria || "Sin categoría"}
+        </span>
+      </div>
+      <div style="margin-top:6px">${item.descripcion || ""}</div>
+      <div style="margin-top:6px"><b>Lugar:</b> ${item.lugar || "-"}</div>
+      <div style="margin-top:6px"><b>Fecha:</b> ${item.fecha || formatDate(item.fechaRegistro)}</div>
+      <div style="margin-top:6px;font-size:12px;color:#555">
+        <b>Tipo:</b> ${item.tipo || "-"} ${item.clase ? `| <b>Clase:</b> ${item.clase}` : ""}
+      </div>
+    </div>
+  `;
+}
+function applyFilters(data, q, cat) {
+  const qn = normalizeText(q || "");
+  return data.filter(it => {
+    const byCat = !cat || (it.categoria === cat);
+    const text = normalizeText(`${it.nombre || ""} ${it.descripcion || ""} ${it.lugar || ""}`);
+    const byText = !qn || text.includes(qn);
+    return byCat && byText;
+  });
+}
+
+/* ========= Carga de datos ========= */
+async function cargarDatos() {
+  // Estados iniciales
+  document.getElementById("estadoEncontrados").textContent = "Cargando...";
+  document.getElementById("estadoPerdidos").textContent = "Cargando...";
+  document.getElementById("estadoComparador").textContent = "Cargando datos...";
+
+  try {
+    const resp = await fetch(API_TODOS);
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error(`HTTP ${resp.status}: ${txt}`);
+    }
+    const contentType = resp.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      const txt = await resp.text();
+      throw new Error("El servidor no devolvió JSON: " + txt.slice(0, 120));
+    }
+    todos = await resp.json();
+
+    // Clasificación por tipo
+    encontrados = (todos || []).filter(x => (x?.tipo || "").toLowerCase() === "encontrado");
+    perdidos    = (todos || []).filter(x => (x?.tipo || "").toLowerCase() === "perdido");
+
+    // Render inicial en pestañas
+    cargarEncontrados();
+    cargarPerdidos();
+
+    document.getElementById("estadoComparador").textContent =
+      `Datos listos. Encontrados: ${encontrados.length} | Perdidos: ${perdidos.length}`;
+  } catch (err) {
+    console.error("Fallo al cargar BaseDATOS.json:", err);
+    document.getElementById("estadoEncontrados").textContent = "❌ No se pudieron cargar los datos.";
+    document.getElementById("estadoPerdidos").textContent    = "❌ No se pudieron cargar los datos.";
+    document.getElementById("estadoComparador").textContent  = "❌ No se pudieron cargar los datos.";
+  }
+}
+
+/* ========= Pestañas ========= */
+function mostrar(id) {
+  // Secciones
+  ["encontrados","perdidos","comparador"].forEach(sec => {
+    document.getElementById(sec).style.display = (sec === id) ? "block" : "none";
+  });
+  // Navbar activa
+  ["navEncontrados","navPerdidos","navComparador"].forEach(n => {
+    document.getElementById(n).classList.remove("active");
+  });
+  const navMap = { encontrados: "navEncontrados", perdidos: "navPerdidos", comparador: "navComparador" };
+  document.getElementById(navMap[id]).classList.add("active");
+}
+
+/* ========= Render de cada pestaña ========= */
+function cargarEncontrados() {
+  const q   = document.getElementById("qEncontrados").value || "";
+  const cat = document.getElementById("catEncontrados").value || "";
+  const data = applyFilters(encontrados, q, cat);
+
+  const cont = document.getElementById("listaEncontrados");
+  if (data.length === 0) {
+    cont.innerHTML = `<div class="msg">No hay objetos encontrados que coincidan con los filtros.</div>`;
+  } else {
+    cont.innerHTML = data.map(renderItemCard).join("");
+  }
+  document.getElementById("estadoEncontrados").textContent = `Mostrando ${data.length} de ${encontrados.length}`;
+}
+
+function cargarPerdidos() {
+  const q   = document.getElementById("qPerdidos").value || "";
+  const cat = document.getElementById("catPerdidos").value || "";
+  const data = applyFilters(perdidos, q, cat);
+
+  const cont = document.getElementById("listaPerdidos");
+  if (data.length === 0) {
+    cont.innerHTML = `<div class="msg">No hay reportes perdidos que coincidan con los filtros.</div>`;
+  } else {
+    cont.innerHTML = data.map(renderItemCard).join("");
+  }
+  document.getElementById("estadoPerdidos").textContent = `Mostrando ${data.length} de ${perdidos.length}`;
+}
+
+/* ========= Comparador sencillo ========= */
+
+function comparar() {
+  const cat = document.getElementById("catComparador").value || "";
+  const umbral = parseInt(document.getElementById("umbral").value, 10) || 50;
+
+  // Filtrar por categoría si se selecciona
+  const enc = cat ? encontrados.filter(e => e.categoria === cat) : encontrados;
+  const per = cat ? perdidos.filter(p => p.categoria === cat) : perdidos;
+
+  const resultados = [];
+
+  for (const p of per) {
+    for (const e of enc) {
+      // Solo comparar si son de tipos diferentes
+      if ((p.tipo || "").toLowerCase() === "perdido" && (e.tipo || "").toLowerCase() === "encontrado") {
+        const score = calcularScore(p, e);
+        if (score >= umbral) {
+          resultados.push({ p, e, score });
+        }
+      }
+    }
+  }
+
+  resultados.sort((a, b) => b.score - a.score);
+
+  const cont = document.getElementById("resultadoComparador");
+  if (resultados.length === 0) {
+    cont.innerHTML = `<div class="msg">Sin coincidencias sobre el umbral (${umbral}%).</div>`;
+    return;
+  }
+
+  cont.innerHTML = resultados.map(r => `
+    <div class="pair">
+      <div><span class="score">Score: ${r.score}%</span></div>
+      <div style="margin-top:6px"><b>Perdido:</b> ${r.p.nombre || "-"} | ${r.p.categoria || "-"} | ${r.p.lugar || "-"}</div>
+      <div style="font-size:12px;color:#555">${r.p.descripcion || ""}</div>
+      <div style="margin-top:6px"><b>Encontrado:</b> ${r.e.nombre || "-"} | ${r.e.categoria || "-"} | ${r.e.lugar || "-"}</div>
+      <div style="font-size:12px;color:#555">${r.e.descripcion || ""}</div>
+    </div>
+  `).join("");
+}
+
+// Nueva función para calcular el score
+function calcularScore(per, enc) {
+  const txtPer = `${per.nombre || ""} ${per.descripcion || ""}`;
+  const txtEnc = `${enc.nombre || ""} ${enc.descripcion || ""}`;
+  const j = jaccard(txtPer, txtEnc); // similitud textual (nombre + descripción)
+
+  const catMatch = (per.categoria || "") === (enc.categoria || "");
+  const lugarMatch = (per.lugar || "") === (enc.lugar || "");
+
+  // Pesos: texto 60%, categoría 20%, lugar 20%
+  const score = (0.6 * j) + (catMatch ? 20 : 0) + (lugarMatch ? 20 : 0);
+  return Math.round(score);
+}
+
+
+/* ========= Eventos ========= */
+document.getElementById("qEncontrados").addEventListener("input", cargarEncontrados);
+document.getElementById("catEncontrados").addEventListener("change", cargarEncontrados);
+
+document.getElementById("qPerdidos").addEventListener("input", cargarPerdidos);
+document.getElementById("catPerdidos").addEventListener("change", cargarPerdidos);
+
+/* ========= Arranque ========= */
+cargarDatos();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+[
+  {
+    "tipo": "encontrado",
+    "nombre": "Cargador Portatil",
+    "descripcion": "Cargador HP color negro",
+    "categoria": "Electronica",
+    "lugar": "Bilioteca",
+    "fecha": "2025-12-01",
+    "id": 1764734745847
+  },
+  {
+    "tipo": "encontrado",
+    "nombre": "Botella Azul",
+    "descripcion": "Botella Azul logo udec",
+    "categoria": "Accesorios",
+    "lugar": "TM101",
+    "fecha": "2025-12-02",
+    "id": 1764734777372
+  },
+  {
+    "tipo": "perdido",
+    "nombre": "Sudadera",
+    "descripcion": "sudadera roja",
+    "categoria": "Ropa",
+    "lugar": "TM101",
+    "fecha": "2025-12-01",
+    "id": 1764739443589
+  },
+  {
+    "tipo": "encontrado",
+    "nombre": "Polera colo colo",
+    "descripcion": "Poler colo colo blanca",
+    "categoria": "Ropa",
+    "lugar": "Cancha 1",
+    "fecha": "2025-12-01",
+    "id": 1764739470519
+  },
+  {
+    "tipo": "perdido",
+    "nombre": "Botella Azul",
+    "descripcion": "D",
+    "categoria": "Accesorios",
+    "lugar": "TM101",
+    "fecha": "2025-12-01",
+    "id": 1764765511888
+  }
+]
