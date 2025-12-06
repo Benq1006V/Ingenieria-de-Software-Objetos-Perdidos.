@@ -39,4 +39,47 @@ Durante esta etapa se desarrollará el flujo funcional para que los usuarios pue
 Además del registro, se implementará el módulo de comparación que analiza de forma automática los objetos perdidos contra los objetos encontrados previamente almacenados. Este proceso utilizará criterios como similitud de descripciones, coincidencia de categorías, coincidencia aproximada de fechas y coincidencias textuales, generando una lista de posibles matches. El sistema no confirmará la coincidencia por sí mismo, pero dejará las coincidencias listas para ser revisadas por el encargado en un sprint posterior.
 
 
+US01 (Must) Registrar objeto perdido Como usuario que perdi´o, quiero
+completar y enviar un formulario de objeto perdido para que el sistema lo reg-
+istre y eval´ue coincidencias.
+Criterios de aceptaci´on:
+• Rechaza env´ıo si faltan campos obligatorios.
+• Tras un env´ıo v´alido, el registro aparece en la lista del Encargado.
+
+
+US02 (Must) Registrar objeto encontrado Como usuario que encontr´o,
+quiero completar y enviar un formulario de objeto encontrado para facilitar la
+devoluci´on.
+Criterios de aceptaci´on:
+• Valida tipo de informaci´on ingresada, si no cumple, no permite enviar
+registro.
+• Tras un env´ıo v´alido, el registro es visible al Encargado.
+
+
+US03 (Must) Visualizar reportes Como Encargado, quiero ver, filtrar y
+ordenar reportes para priorizar la revisi´on.
+Criterios de aceptaci´on:
+• Filtros por tipo (perdido o encontrado), categor´ıa, fecha y lugar.
+• Acceso al detalle del reporte con datos y evidencias.
+
+
+US04 (Must) Verificar o descartar coincidencia Como Encargado, quiero
+marcar una coincidencia como verificada o descartada para mantener consisten-
+cia.
+Criterios de aceptaci´on:
+• Verificar cambia estado a coincidencia verificada.
+
+
+US05 (Should) Adjuntar evidencia Como usuario, quiero adjuntar una
+foto para ayudar a confirmar coincidencias.
+Criterios de aceptaci´on:
+• Se aceptan JPG o PNG menor o igual a 2 MB; otros formatos o tama˜nos
+se rechazan con mensaje.
+
+
+US06 (Could) Generar cita de devoluci´on Como Encargado, quiero agen-
+dar una cita para coordinar la entrega. Queda planificada para el siguiente
+sprint.
+Criterios de aceptaci´on:
+• Disponible solo para coincidencias verificadas; registra fecha, hora y lugar.
 
