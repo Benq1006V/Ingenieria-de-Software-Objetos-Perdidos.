@@ -3,43 +3,36 @@
 Product Owner (PO): Andrea Nicole Arellano M´arquez
 Scrum Master (SM): Angel Benjam´ın Barrientos Carrasco 
 
-Visi´on del Sprint
+Visión del Problema
+Dentro de la UdeC, no se tiene un registro formalizado ni centralizado de los objetos perdidos. Cada facultad, edificio o dependencia maneja esta situación de manera independiente, ya sea en una oficina de los encargados o mandarlos con los guardias. Esta falta de estandarización dificulta la trazabilidad de los objetos y reduce significativamente las posibilidades de que los estudiantes y personal recuperen sus pertenencias.
 
-Visi´on del Sprint 1
-El objetivo principal del Sprint 1 es implementar el flujo completo para el registro de
-objetos encontrados dentro del sistema. Este sprint busca desarrollar la funcionalidad que
-permita a los usuarios o administradores ingresar informaci´on sobre objetos extraviados que
-han sido hallados, asegurando que los datos se almacenen correctamente, con validaciones
-apropiadas y una experiencia de uso sencilla e intuitiva.
-Durante este sprint se abordar´an todas las etapas esenciales del proceso, desde la creaci´on
-de la interfaz de registro hasta la persistencia de los datos en la base de datos. Se busca
-garantizar que cada elemento del flujo sea funcional, seguro y coherente con la arquitectura
-general del sistema.
+Como consecuencia, los usuarios carecen de un mecanismo claro para registrar la pérdida de un objeto o consultar su estado, generando incertidumbre y desconfianza en el proceso institucional. Sin un registro completo, actualizable y compartido entre áreas, muchas coincidencias potenciales pasan desapercibidas y la devolución de objetos se vuelve tardada o, en ocasiones, imposible.
 
-Tareas principales
-1. Dise˜no y desarrollo del formulario de registro: Crear una interfaz gr´afica que
-permita ingresar los datos relevantes del objeto (nombre, descripci´on, lugar y fecha en
-que fue encontrado, imagen, entre otros campos). Se prioriza un dise˜no responsivo y
-claro, compatible con distintos dispositivos.
-2. Implementaci´on de validaciones de entrada: Asegurar que los campos obligatorios
-sean completados correctamente. Validar formatos de entrada (por ejemplo, tipo de
-archivo de imagen, longitud de texto y formato de fecha) para evitar errores y mejorar
-la calidad de los datos capturados.
-1
-3. Integraci´on con la base de datos: Dise˜nar la estructura de la tabla correspondiente
-para almacenar los objetos encontrados. Implementar la conexi´on entre el formulario
-y la base de datos, garantizando la persistencia, consistencia y seguridad de los datos
-registrados.
-4. Pruebas iniciales del flujo: Realizar pruebas funcionales que verifiquen el correcto
-funcionamiento del registro desde la interfaz hasta el almacenamiento. Se incluir´an
-casos de prueba que validen el manejo de errores, entradas incorrectas y mensajes de
-validaci´on.
-5. Documentaci´on t´ecnica y manual preliminar de usuario: Elaborar la documentaci´on que describa el proceso de desarrollo, los requerimientos t´ecnicos y la estructura
-de datos implementada. Adem´as, generar una gu´ıa b´asica para el uso del m´odulo de
-registro de objetos encontrados.
+Visión de la solución
+La solución propuesta consiste en una plataforma HTML que centraliza, organiza y valida todos los reportes de objetos perdidos y encontrados dentro de la UDEC. Su propósito es agilizar y transparentar el proceso de recuperación, reduciendo tiempos de espera y evitando errores humanos.
 
-Resultado esperado
-Al concluir el Sprint 1, el sistema deberá contar con un m´odulo completamente funcional
-para el registro de objetos encontrados. Este m´odulo deber´a incluir validaciones adecuadas,
-mensajes informativos al usuario y almacenamiento seguro de los datos. El resultado servir´a
-como base para los pr´oximos sprints, en los cuales se a˜nadir´an funcionalidades complementarias como la b´usqueda, categorizaci´on y notificaci´on de coincidencias con objetos perdidos.
+El sistema permite al usuario (Alumno, Colaborador, profesor o externo) registrar fácilmente un objeto encontrado o reportar la pérdida de uno, adjuntando información clave como descripción, ubicación, fecha y evidencia fotográfica. Toda esta información se almacena en una base de datos para facilitar la trazabilidad y el control.
+
+Por otro lado, el encargado del área recibe los reportes a través de un panel administrativo donde puede revisarlos, filtrarlos y validarlos. Gracias a un módulo de coincidencias automatizado —basado en comparación de descripciones, categorías y análisis de similitudes— la plataforma identifica posibles matches entre objetos perdidos y encontrados. Esto optimiza el trabajo del encargado, quien solo debe confirmar las coincidencias sugeridas por el sistema.
+
+Una vez encontrada y validada una coincidencia entre un objeto perdido y uno encontrado, la plataforma permite agendar la entrega del artículo al dueño legítimo. Esto garantiza una devolución ordenada, segura y documentada.
+
+
+Visión del Sprint
+
+Visión del Sprint 1
+El objetivo principal del Sprint 1 es diseñar y construir la interfaz completa para el registro de objetos encontrados dentro del sistema. Este sprint se enfoca en desarrollar una experiencia visual clara, ordenada e intuitiva que permita a cualquier usuario identificar fácilmente los campos necesarios y comprender el proceso de registro sin dificultades.
+
+Durante esta etapa se trabajará en la creación de una pantalla atractiva, coherente con la identidad visual del proyecto, donde la disposición de los elementos facilite la captura de información. Se cuidarán aspectos como la organización del formulario, la legibilidad, el uso de colores y jerarquías visuales, así como la incorporación de indicadores, mensajes y retroalimentación visual que guíen al usuario en cada paso.
+
+El objetivo es que la interfaz transmita claridad, accesibilidad y profesionalismo, asegurando que toda persona que interactúe con ella pueda realizar el registro de manera fluida. Aunque el almacenamiento de datos forma parte del proceso, en este sprint la prioridad es establecer una base visual sólida y bien estructurada que siente las bases para la funcionalidad futura del sistema.
+
+Visión del Sprint 2
+El objetivo del Sprint 2 es implementar la funcionalidad completa para registrar nuevos reportes de objetos perdidos y habilitar el proceso inicial de comparación entre objetos perdidos y encontrados para identificar posibles coincidencias. Este sprint se centra en construir la lógica necesaria para que el sistema gestione datos confiables y sea capaz de sugerir matches automáticamente.
+
+Durante esta etapa se desarrollará el flujo funcional para que los usuarios puedan registrar un objeto perdido, capturando información clave como nombre, descripción, categoría, ubicación, fecha y evidencia fotográfica. Se incluirán validaciones que aseguren que los datos ingresados sean correctos, completos y coherentes.
+
+Además del registro, se implementará el módulo de comparación que analiza de forma automática los objetos perdidos contra los objetos encontrados previamente almacenados. Este proceso utilizará criterios como similitud de descripciones, coincidencia de categorías, coincidencia aproximada de fechas y coincidencias textuales, generando una lista de posibles matches. El sistema no confirmará la coincidencia por sí mismo, pero dejará las coincidencias listas para ser revisadas por el encargado en un sprint posterior.
+
+
+
